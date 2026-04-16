@@ -16,7 +16,6 @@ export default function Home() {
   
   const [records, setRecords] = useState<any[]>([]);
 
-  // UPDATED: Now targeting student5_grades
   const fetchRecords = useCallback(async () => {
     const { data } = await supabase
       .from('student5_grades')
@@ -42,7 +41,6 @@ export default function Home() {
   const addStudent = async () => {
     if (!name.trim()) return alert("Enter Student Name");
     
-    // Calculate raw percentage for storage
     const getVal = (item: any) => (item.over > 0 ? (Number(item.score || 0) / item.over) * 100 : 0);
 
     const payload = { 
@@ -54,7 +52,6 @@ export default function Home() {
       major_exam: getVal(scores.exam) 
     };
 
-    // UPDATED: Now targeting student5_grades
     if (editingId) await supabase.from('student5_grades').update(payload).eq('id', editingId);
     else await supabase.from('student5_grades').insert([payload]);
 
@@ -77,7 +74,6 @@ export default function Home() {
 
   const deleteRecord = async (id: string) => {
     if (confirm("Delete this student record?")) {
-      // UPDATED: Now targeting student5_grades
       await supabase.from('student5_grades').delete().eq('id', id);
       fetchRecords();
     }
@@ -87,7 +83,7 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-r from-[#70e1ca] to-[#a8b8f3] p-4 md:p-10 text-black font-sans">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl md:text-4xl font-black uppercase text-center mb-10 tracking-tighter">
-          BSIT Students Grading System (V5)
+          BSIT Student Grading System
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -109,7 +105,7 @@ export default function Home() {
                 ))}
               </div>
               <button onClick={addStudent} className="w-full bg-[#2d2d2d] text-white py-4 rounded font-black uppercase text-xs hover:bg-black transition-all">
-                {editingId ? 'Update Record' : 'Save to Student 5'}
+                {editingId ? 'Update Record' : 'Add Student and Grades'}
               </button>
               {editingId && <button onClick={resetForm} className="w-full text-[10px] font-bold uppercase text-gray-600 mt-2">Cancel</button>}
             </div>
@@ -141,7 +137,6 @@ export default function Home() {
                       <td className="p-4 border-r border-black">{Number(r.attendance).toFixed(0)}</td>
                       <td className="p-4 border-r border-black">{Number(r.major_exam).toFixed(0)}</td>
                       <td className="p-4 border-r border-black font-black text-blue-700 bg-blue-50/20">
-                        {/* Pulling directly from the database's generated column */}
                         {Number(r.final_grade || 0).toFixed(1)}%
                       </td>
                       <td className="p-4">
